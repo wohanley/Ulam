@@ -1,3 +1,5 @@
-ulam.checkPrimality = function (n) {
-	return primality(n);
+ulam.checkers = {
+	checkPrimality: function (n) {
+		return primality(n);
+	}
 };

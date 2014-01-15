@@ -6,7 +6,7 @@ test("primality checker wraps primality.js", function () {
 	var primeStub = sinon.stub(window, "primality");
 	primeStub.returns(result);
 	
-	var outerResult = ulam.checkPrimality(n);
+	var outerResult = ulam.checkers.checkPrimality(n);
 	
 	sinon.assert.calledOnce(primeStub);
 	strictEqual(outerResult, result, "should return result from primality");

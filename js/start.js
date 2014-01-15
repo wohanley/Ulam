@@ -5,4 +5,4 @@
 	var grid = [];
 	
 	new ulam.SpiralIterator(grid).go();
-});
+})();
