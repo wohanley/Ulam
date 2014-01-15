@@ -1,0 +1,3 @@
+ulam.SpiralIterator = function (grid) {
+	
+};
