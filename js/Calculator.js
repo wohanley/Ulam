@@ -1,0 +1,3 @@
+ulam.Calculator = function (grid) {
+	
+};
