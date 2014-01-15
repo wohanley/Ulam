@@ -1,3 +1,3 @@
-ulam.SpiralIterator = function (checker) {
+ulam.SpiralIterator = function (grid) {
 	
 };

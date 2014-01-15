@@ -1,6 +1,8 @@
 (function () {
 	
+	var checkFn = ulam.checkPrimality;
+	
 	var grid = [];
 	
-	calculator = new ulam.Calculator(grid);
+	new ulam.SpiralIterator(grid).go();
 });

@@ -662,8 +662,9 @@ For more information on this, and how to apply and follow the GNU AGPL, see
 
 
 
-This project includes primality and component, both available under the MIT
-license:
+This project includes primality, copyright 2012–2013 Kenan Yildirim
+<http://kenany.me/>; and component, copyright (c) 2012 TJ Holowaychuk
+<tj@vision-media.ca>; both available under the MIT license:
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
