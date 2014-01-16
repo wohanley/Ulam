@@ -14,7 +14,7 @@
 	};
 	
 	test("default starts right and moves counterclockwise", function () {
-		var stepper = new ulam.Stepper();
+		var stepper = new ulam.SpiralWalker();
 		var coordinates = { x: 0, y: 0 };
 		
 		checkWalk(stepper, coordinates, [
@@ -32,7 +32,7 @@
 	});
 	
 	test("clockwise", function () {
-		var stepper = new ulam.Stepper({ clockwise: true });
+		var stepper = new ulam.SpiralWalker({ clockwise: true });
 		var coordinates = { x: 0, y: 0 };
 		
 		checkWalk(stepper, coordinates, [
@@ -50,7 +50,7 @@
 	});
 	
 	test("starting down and moving clockwise", function () {
-		var stepper = new ulam.Stepper({ startDirection: "down", clockwise: true });
+		var stepper = new ulam.SpiralWalker({ startDirection: "down", clockwise: true });
 		var coordinates = { x: 0, y: 0 };
 		
 		checkWalk(stepper, coordinates, [
@@ -68,7 +68,7 @@
 	});
 	
 	test("starting left", function () {
-		var stepper = new ulam.Stepper({ startDirection: "left" });
+		var stepper = new ulam.SpiralWalker({ startDirection: "left" });
 		var coordinates = { x: 0, y: 0 };
 		
 		checkWalk(stepper, coordinates, [
