@@ -1,1 +1,3 @@
-window.ulam = {};
+window.ulam = {
+	numberLine: {}
+};

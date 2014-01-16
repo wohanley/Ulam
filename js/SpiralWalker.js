@@ -1,4 +1,4 @@
-ulam.Stepper = (function () {
+ulam.SpiralWalker = (function () {
 	
 	var Step = function (replace, bound) {
 		this.replace = replace;

@@ -1,6 +1,4 @@
-ulam.SpiralIterator = function (grid) {
-	
-	var stepper = new ulam.Stepper();
+ulam.numberLine.Iterator = function (grid, walker, checker) {
 	
 	var centerRow = Math.floor(grid.length / 2);
 	var centerColumn = Math.floor(grid[centerRow].length / 2);
@@ -10,9 +8,12 @@ ulam.SpiralIterator = function (grid) {
 		y: centerColumn
 	};
 	
+	var currentNumber = 1;
+	
 	function next() {
-		grid[coordinates.x][coordinates.y].check();
-		stepper = stepper.takeStep(coordinates);
+		grid[coordinates.x][coordinates.y].mark(checker(currentNumber));
+		walker = walker.takeStep(coordinates);
+		currentNumber++;
 	};
 	
 	this.go = function () {
