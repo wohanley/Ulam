@@ -17,6 +17,8 @@ ulam.numberLine.Iterator = function (grid, walker, checker) {
 	};
 	
 	this.go = function () {
-		
+		while (coordinates.x < grid.length && coordinates.y < grid[coordinates.x].length) {
+			next();
+		}
 	};
 };
