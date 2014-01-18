@@ -1,6 +1,6 @@
-(function () {
+$(function () {
 	
-	var gridSize = 151;
+	var gridSize = 29;
 	
 	var grid = [];
 	var table = $('<table/>');
@@ -11,7 +11,7 @@
 		var tr = $('<tr/>');
 		table.append(tr);
 		for (var j = 0; j < gridSize; j++) {
-			var td = $('<td style="height:10px; width:10px;"/>');
+			var td = $('<td class="cell"/>');
 			tr.append(td);
 		}
 	}
@@ -26,4 +26,4 @@
 	}}).walk(gridSize * gridSize);
 	
 	new ulam.SpiralWalker(grid, { action: ulam.checkers.checkPrimality }).walk(gridSize * gridSize);
-})();
+});

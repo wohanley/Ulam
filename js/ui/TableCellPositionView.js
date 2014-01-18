@@ -3,5 +3,9 @@ ulam.ui.TableCellPositionView = function (td) {
 };
 
 ulam.ui.TableCellPositionView.prototype.marked = function (highlight) {
-	this._td.css("background-color", highlight ? "#00F" : "#000");
+	if (highlight) {
+		this._td.addClass("marked");
+	} else {
+		this._td.removeClass("marked");
+	}
 };
