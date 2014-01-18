@@ -1,17 +1,18 @@
-ulam.numberLine.Position = function () {
+ulam.numberLine.Position = function (n) {
+	this.number = n;
 	this._checkObservers = [];
 };
 
-ulam.numberLine.Position.prototype.mark = function (highlight) {
+ulam.numberLine.Position.prototype.mark = function (check) {
 	for (var i = 0; i < this._checkObservers.length; i++) {
-		observer.marked(highlight);
+		this._checkObservers[i].marked(check(this.number));
 	}
 };
 
 ulam.numberLine.Position.prototype.addCheckObserver = function (observer) {
-	this._checkObservers.add(observer);
+	this._checkObservers.push(observer);
 };
 
-ulam.numberLine.Position.prototype.addCheckObserver = function (observer) {
+ulam.numberLine.Position.prototype.removeCheckObserver = function (observer) {
 	this._checkObservers.splice(this._checkObservers.indexOf(observer), 1);
 };

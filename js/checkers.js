@@ -1,5 +1,6 @@
 ulam.checkers = {
-	checkPrimality: function (n) {
-		return primality(n);
+	checkPrimality: function (grid, coordinates) {
+		var position = grid[coordinates.x][coordinates.y];
+		position.mark(ulam.math.isPrime);
 	}
 };

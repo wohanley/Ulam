@@ -1,62 +1,43 @@
 ulam.SpiralWalker = (function () {
 	
-	var Step = function (replace, bound) {
-		this.replace = replace;
-		this.bound = bound;
+	var StepRight = function (center, bound) {
+		this._bound = center.y + bound;
 	};
-	
-	Step.prototype.take = function (coordinates) {
-		if (this.canMove(coordinates)) {
-			this.move(coordinates);
-			return this;
-		} else {
-			var replacementStep = this.replace();
-			return replacementStep.take(coordinates);
-		}
-	};
-	
-	var StepRight = function (replace, bound) {
-		Step.call(this, replace, bound);
-	};
-	StepRight.prototype = new Step();
 	StepRight.prototype.canMove = function (coordinates) {
-		return coordinates.x < this.bound;
+		return coordinates.y < this._bound;
 	};
 	StepRight.prototype.move = function (coordinates) {
-		coordinates.x += 1;
-	};
-	
-	var StepUp = function (replace, bound) {
-		Step.call(this, replace, bound);
-	};
-	StepUp.prototype = new Step();
-	StepUp.prototype.canMove = function (coordinates) {
-		return coordinates.y < this.bound;
-	};
-	StepUp.prototype.move = function (coordinates) {
 		coordinates.y += 1;
 	};
 	
-	var StepLeft = function (replace, bound) {
-		Step.call(this, replace, bound);
+	var StepUp = function (center, bound) {
+		this._bound = center.x + bound;
 	};
-	StepLeft.prototype = new Step();
-	StepLeft.prototype.canMove = function (coordinates) {
-		return coordinates.x > 0 - this.bound;
+	StepUp.prototype.canMove = function (coordinates) {
+		return coordinates.x < this._bound;
 	};
-	StepLeft.prototype.move = function (coordinates) {
-		coordinates.x -= 1;
+	StepUp.prototype.move = function (coordinates) {
+		coordinates.x += 1;
 	};
 	
-	var StepDown = function (replace, bound) {
-		Step.call(this, replace, bound);
+	var StepLeft = function (center, bound) {
+		this._bound = center.y - bound;
 	};
-	StepDown.prototype = new Step();
+	StepLeft.prototype.canMove = function (coordinates) {
+		return coordinates.y > this._bound;
+	};
+	StepLeft.prototype.move = function (coordinates) {
+		coordinates.y -= 1;
+	};
+	
+	var StepDown = function (center, bound) {
+		this._bound = center.x - bound;
+	};
 	StepDown.prototype.canMove = function (coordinates) {
-		return coordinates.y > 0 - this.bound;
+		return coordinates.x > this._bound;
 	};
 	StepDown.prototype.move = function (coordinates) {
-		coordinates.y -= 1;
+		coordinates.x -= 1;
 	};
 	
 	return (function () {
@@ -72,36 +53,126 @@ ulam.SpiralWalker = (function () {
 			return directionNames[name];
 		};
 		
-		return function (options) {
+		var orderedStepTypes = [StepRight, StepUp, StepLeft, StepDown];
 		
-			options = options || {};
-			var startDirection = parseDirectionName(options.startDirection || "right");
-			var clockwise = !!options.clockwise;
-			
-			var bound = 0;
-			
-			var orderedStepTypes = [StepRight, StepUp, StepLeft, StepDown];
-			var current = orderedStepTypes.indexOf(startDirection);
-			var direction = clockwise ? 1 : -1;
-			
-			var nextStep = function () {
-				var stepType = orderedStepTypes[current];
-				bound = stepType === startDirection ? bound + 1 : bound;
-				current = addModulo(4, current, direction);
-				
-				return new stepType(nextStep, bound);
+		var lowerLeft = function (gridLength) {
+			return {
+				x: Math.floor(gridLength / 2) - 1,
+				y: Math.floor(gridLength / 2) - 1
 			};
-			
-			var step = nextStep();
-			
-			this.takeStep = function (coordinates) {
-				step = step.take(coordinates);
+		};
+		
+		var lowerRight = function (gridLength) {
+			return {
+				x: Math.ceil(gridLength / 2) - 1,
+				y: Math.floor(gridLength / 2) - 1
 			};
-			
-			function addModulo(modulus, operand1, operand2) {
-				var r = (operand1 + operand2) % 4;
-				return r >= 0 ? r : r + modulus;
+		};
+		
+		var upperLeft = function (gridLength) {
+			return {
+				x: Math.floor(gridLength / 2) - 1,
+				y: Math.ceil(gridLength / 2) - 1
+			};
+		};
+		
+		var upperRight = function (gridLength) {
+			return {
+				x: Math.ceil(gridLength / 2) - 1,
+				y: Math.ceil(gridLength / 2) - 1
+			};
+		};
+		
+		/*
+		 * Two-level decision tree based on start and turn directions (1 being
+		 * clockwise, 0 counterclockwise).
+		 */
+		var evenLengthStartFinders = {
+			"right": { 0: lowerLeft, 1: upperLeft },
+			"up": { 0: lowerRight, 1: lowerLeft },
+			"left": { 0: upperRight, 1: lowerRight },
+			"down": { 0: upperLeft, 1: upperRight }
+		}
+		
+		var findStart = function (grid, startDirection, clockwise) {
+			if (grid.length % 2 === 1) {
+				// odd length sides are easy...
+				var center = Math.floor(grid.length / 2);
+				return { x: center, y: center };
+			} else {
+				// ...even is a little complicated.
+				return evenLengthStartFinders[startDirection][clockwise ? 1 : 0](grid);
 			}
 		};
+		
+		var defaults = {
+			startDirection: "right",
+			clockwise: false,
+			maxNumber: 0,
+			action: function () {}
+		};
+		
+		/*
+		 * Grid is assumed to be square, and you will have problems if it isn't.
+		 */
+		var SpiralWalker = function (grid, passedOptions) {
+		
+			if (!grid) {
+				throw new Error("No grid supplied.");
+			}
+			
+			this._grid = grid;
+			this._options = $.extend({}, defaults, passedOptions);
+			
+			this._center = findStart(this._grid, this._options.startDirection, this._options.clockwise);
+			this._coordinates = $.extend({}, this._center);
+			this._bound = 0;
+			
+			this._options.startDirection = parseDirectionName(this._options.startDirection);
+			
+			this._current = orderedStepTypes.indexOf(this._options.startDirection);
+			this._direction = this._options.clockwise ? -1 : 1;
+			
+			this._step = this._nextStep();
+			
+			this._takeStep = this._takeFirstStep;
+		};
+		
+		SpiralWalker.prototype._nextStep = function () {
+			var stepType = orderedStepTypes[this._current];
+			this._bound = stepType === this._options.startDirection ? this._bound + 1 : this._bound;
+			this._current = ulam.math.addModulo(4, this._current, this._direction);
+			
+			return new stepType(this._center, this._bound);
+		};
+		
+		SpiralWalker.prototype._nextCoordinates = function () {
+			if (this._step.canMove(this._coordinates)) {
+				return this._step.move(this._coordinates);
+			} else {
+				this._step = this._nextStep();
+				return this._nextCoordinates();
+			}
+		};
+
+		SpiralWalker.prototype._takeNormalStep = function () {
+			this._nextCoordinates();
+			this._options.action(this._grid, this._coordinates);
+			return this._grid[this._coordinates.x][this._coordinates.y];
+		};
+		
+		SpiralWalker.prototype._takeFirstStep = function () {
+			this._takeStep = this._takeNormalStep;
+			this._options.action(this._grid, this._coordinates);
+			return this._grid[this._coordinates.x][this._coordinates.y];
+		};
+		
+		SpiralWalker.prototype.walk = function (steps) {
+			for (var i = 0; i < steps; i++) {
+				this._takeStep();
+			}
+		};
+		
+		return SpiralWalker;
 	})();
 })();

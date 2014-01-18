@@ -1,3 +1,5 @@
 window.ulam = {
-	numberLine: {}
+	math: {},
+	numberLine: {},
+	ui: {}
 };
