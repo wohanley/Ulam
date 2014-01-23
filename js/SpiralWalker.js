@@ -92,7 +92,7 @@ ulam.SpiralWalker = (function () {
 			"up": { 0: lowerRight, 1: lowerLeft },
 			"left": { 0: upperRight, 1: lowerRight },
 			"down": { 0: upperLeft, 1: upperRight }
-		}
+		};
 		
 		var findStart = function (grid, startDirection, clockwise) {
 			if (grid.length % 2 === 1) {
