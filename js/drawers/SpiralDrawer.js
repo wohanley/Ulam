@@ -158,13 +158,11 @@ ulam.SpiralWalker = (function () {
 		SpiralWalker.prototype._takeNormalStep = function () {
 			this._nextCoordinates();
 			this._options.action(this._grid, this._coordinates);
-			return this._grid[this._coordinates.x][this._coordinates.y];
 		};
 		
 		SpiralWalker.prototype._takeFirstStep = function () {
 			this._takeStep = this._takeNormalStep;
 			this._options.action(this._grid, this._coordinates);
-			return this._grid[this._coordinates.x][this._coordinates.y];
 		};
 		
 		SpiralWalker.prototype.walk = function (steps) {
