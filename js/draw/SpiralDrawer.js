@@ -39,138 +39,135 @@ ulam.SpiralWalker = (function () {
 	StepDown.prototype.move = function (coordinates) {
 		coordinates.x -= 1;
 	};
+		
+	var directionNames = {
+		"right": StepRight,
+		"up": StepUp,
+		"left": StepLeft,
+		"down": StepDown
+	};
 	
-	return (function () {
-		
-		var directionNames = {
-			"right": StepRight,
-			"up": StepUp,
-			"left": StepLeft,
-			"down": StepDown
+	var parseDirectionName = function (name) {
+		return directionNames[name];
+	};
+	
+	var orderedStepTypes = [StepRight, StepUp, StepLeft, StepDown];
+	
+	var lowerLeft = function (gridLength) {
+		return {
+			x: Math.floor(gridLength / 2) - 1,
+			y: Math.floor(gridLength / 2) - 1
 		};
-		
-		var parseDirectionName = function (name) {
-			return directionNames[name];
+	};
+	
+	var lowerRight = function (gridLength) {
+		return {
+			x: Math.ceil(gridLength / 2) - 1,
+			y: Math.floor(gridLength / 2) - 1
 		};
-		
-		var orderedStepTypes = [StepRight, StepUp, StepLeft, StepDown];
-		
-		var lowerLeft = function (gridLength) {
-			return {
-				x: Math.floor(gridLength / 2) - 1,
-				y: Math.floor(gridLength / 2) - 1
-			};
+	};
+	
+	var upperLeft = function (gridLength) {
+		return {
+			x: Math.floor(gridLength / 2) - 1,
+			y: Math.ceil(gridLength / 2) - 1
 		};
-		
-		var lowerRight = function (gridLength) {
-			return {
-				x: Math.ceil(gridLength / 2) - 1,
-				y: Math.floor(gridLength / 2) - 1
-			};
+	};
+	
+	var upperRight = function (gridLength) {
+		return {
+			x: Math.ceil(gridLength / 2) - 1,
+			y: Math.ceil(gridLength / 2) - 1
 		};
+	};
+	
+	/*
+	 * Two-level decision tree based on start and turn directions (1 being
+	 * clockwise, 0 counterclockwise).
+	 */
+	var evenLengthStartFinders = {
+		"right": { 0: lowerLeft, 1: upperLeft },
+		"up": { 0: lowerRight, 1: lowerLeft },
+		"left": { 0: upperRight, 1: lowerRight },
+		"down": { 0: upperLeft, 1: upperRight }
+	};
+	
+	var findStart = function (grid, startDirection, clockwise) {
+		if (grid.length % 2 === 1) {
+			// odd length sides are easy...
+			var center = Math.floor(grid.length / 2);
+			return { x: center, y: center };
+		} else {
+			// ...even is a little complicated.
+			return evenLengthStartFinders[startDirection][clockwise ? 1 : 0](grid);
+		}
+	};
+	
+	var defaults = {
+		startDirection: "right",
+		clockwise: false,
+		maxNumber: 0,
+		action: function () {}
+	};
+	
+	/*
+	 * Grid is assumed to be square, and you will have problems if it isn't.
+	 */
+	var SpiralWalker = function (grid, passedOptions) {
+	
+		if (!grid) {
+			throw new Error("No grid supplied.");
+		}
 		
-		var upperLeft = function (gridLength) {
-			return {
-				x: Math.floor(gridLength / 2) - 1,
-				y: Math.ceil(gridLength / 2) - 1
-			};
-		};
+		this._grid = grid;
+		this._options = $.extend({}, defaults, passedOptions);
 		
-		var upperRight = function (gridLength) {
-			return {
-				x: Math.ceil(gridLength / 2) - 1,
-				y: Math.ceil(gridLength / 2) - 1
-			};
-		};
+		this._center = findStart(this._grid, this._options.startDirection, this._options.clockwise);
+		this._coordinates = $.extend({}, this._center);
+		this._bound = 0;
 		
-		/*
-		 * Two-level decision tree based on start and turn directions (1 being
-		 * clockwise, 0 counterclockwise).
-		 */
-		var evenLengthStartFinders = {
-			"right": { 0: lowerLeft, 1: upperLeft },
-			"up": { 0: lowerRight, 1: lowerLeft },
-			"left": { 0: upperRight, 1: lowerRight },
-			"down": { 0: upperLeft, 1: upperRight }
-		};
+		this._options.startDirection = parseDirectionName(this._options.startDirection);
 		
-		var findStart = function (grid, startDirection, clockwise) {
-			if (grid.length % 2 === 1) {
-				// odd length sides are easy...
-				var center = Math.floor(grid.length / 2);
-				return { x: center, y: center };
-			} else {
-				// ...even is a little complicated.
-				return evenLengthStartFinders[startDirection][clockwise ? 1 : 0](grid);
-			}
-		};
+		this._current = orderedStepTypes.indexOf(this._options.startDirection);
+		this._direction = this._options.clockwise ? -1 : 1;
 		
-		var defaults = {
-			startDirection: "right",
-			clockwise: false,
-			maxNumber: 0,
-			action: function () {}
-		};
+		this._step = this._nextStep();
 		
-		/*
-		 * Grid is assumed to be square, and you will have problems if it isn't.
-		 */
-		var SpiralWalker = function (grid, passedOptions) {
+		this._takeStep = this._takeFirstStep;
+	};
+	
+	SpiralWalker.prototype._nextStep = function () {
+		var stepType = orderedStepTypes[this._current];
+		this._bound = stepType === this._options.startDirection ? this._bound + 1 : this._bound;
+		this._current = ulam.math.addModulo(4, this._current, this._direction);
 		
-			if (!grid) {
-				throw new Error("No grid supplied.");
-			}
-			
-			this._grid = grid;
-			this._options = $.extend({}, defaults, passedOptions);
-			
-			this._center = findStart(this._grid, this._options.startDirection, this._options.clockwise);
-			this._coordinates = $.extend({}, this._center);
-			this._bound = 0;
-			
-			this._options.startDirection = parseDirectionName(this._options.startDirection);
-			
-			this._current = orderedStepTypes.indexOf(this._options.startDirection);
-			this._direction = this._options.clockwise ? -1 : 1;
-			
+		return new stepType(this._center, this._bound);
+	};
+	
+	SpiralWalker.prototype._nextCoordinates = function () {
+		if (this._step.canMove(this._coordinates)) {
+			return this._step.move(this._coordinates);
+		} else {
 			this._step = this._nextStep();
-			
-			this._takeStep = this._takeFirstStep;
-		};
-		
-		SpiralWalker.prototype._nextStep = function () {
-			var stepType = orderedStepTypes[this._current];
-			this._bound = stepType === this._options.startDirection ? this._bound + 1 : this._bound;
-			this._current = ulam.math.addModulo(4, this._current, this._direction);
-			
-			return new stepType(this._center, this._bound);
-		};
-		
-		SpiralWalker.prototype._nextCoordinates = function () {
-			if (this._step.canMove(this._coordinates)) {
-				return this._step.move(this._coordinates);
-			} else {
-				this._step = this._nextStep();
-				return this._nextCoordinates();
-			}
-		};
+			return this._nextCoordinates();
+		}
+	};
 
-		SpiralWalker.prototype._takeNormalStep = function () {
-			this._nextCoordinates();
-			this._options.action(this._grid, this._coordinates);
-		};
-		
-		SpiralWalker.prototype._takeFirstStep = function () {
-			this._takeStep = this._takeNormalStep;
-			this._options.action(this._grid, this._coordinates);
-		};
-		
-		SpiralWalker.prototype.walk = function (steps) {
-			for (var i = 0; i < steps; i++) {
-				this._takeStep();
-			}
-		};
-		
-		return SpiralWalker;
-	})();
+	SpiralWalker.prototype._takeNormalStep = function () {
+		this._nextCoordinates();
+		this._options.action(this._grid, this._coordinates);
+	};
+	
+	SpiralWalker.prototype._takeFirstStep = function () {
+		this._takeStep = this._takeNormalStep;
+		this._options.action(this._grid, this._coordinates);
+	};
+	
+	SpiralWalker.prototype.walk = function (steps) {
+		for (var i = 0; i < steps; i++) {
+			this._takeStep();
+		}
+	};
+	
+	return SpiralWalker;
 })();

@@ -1,6 +1,1 @@
-window.ulam = {
-	math: {},
-	numberLine: {},
-	draw: {},
-	ui: {}
-};
+window.ulam = {};
