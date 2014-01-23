@@ -9,7 +9,7 @@ test("mark sends drawMarker result of check", function () {
 	var drawMarker = sinon.spy();
 	
 	new ulam.draw.Marker(check, drawMarker).mark(1);
-	
-	sinon.assert.calledOnce(drawMarker);
-	sinon.assert.calledWith(drawMarker, result);
+
+	ok(drawMarker.firstCall.args[0] === result, "should call drawMarker with result of check");
+	ok(drawMarker.calledOnce, "should call drawMarker only once");
 });
