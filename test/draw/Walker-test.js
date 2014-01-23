@@ -1,4 +1,6 @@
 (function () {
+	
+	module("ulam.draw.Walker");
 
 	var Walker = ulam.draw.Walker;
 	Walker.prototype._initializeCoordinates = function () {};

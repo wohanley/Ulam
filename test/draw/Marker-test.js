@@ -1,3 +1,5 @@
+module("ulam.draw.Marker");
+
 test("mark sends drawMarker result of check", function () {
 	
 	var result = {};
