@@ -1,17 +1,29 @@
 module("ulam.draw.Marker");
 
-test("mark sends drawMarker result of check", function () {
+test("mark passes drawMarker context and point if check returns true", function () {
 	
-	var result = {};
+	var context = {};
+	var point = {};
 	
 	var check = sinon.spy(function (n) {
-		return result;
+		return true;
 	});
 	
 	var drawMarker = sinon.spy();
 	
-	new ulam.draw.Marker(check, drawMarker).mark(1);
+	new ulam.draw.Marker(check, drawMarker).mark(context, point, 1);
 
-	ok(drawMarker.firstCall.args[0] === result, "should call drawMarker with result of check");
-	ok(drawMarker.calledOnce, "should call drawMarker only once");
+	strictEqual(1, drawMarker.callCount, "should call drawMarker only once");
+	strictEqual(context, drawMarker.firstCall.args[0], "should pass context to drawMarker");
+	strictEqual(point, drawMarker.firstCall.args[1], "should pass point to drawMarker");
+});
+
+test("mark does nothing if check returns false", function () {
+	
+	var check = function () { return false; };
+	var drawMarker = sinon.spy();
+	
+	new ulam.draw.Marker(check, drawMarker).mark(null, null, 1);
+	
+	ok(!drawMarker.called, "should not draw marker");
 });
