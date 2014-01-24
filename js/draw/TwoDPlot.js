@@ -20,7 +20,7 @@ ulam.draw.TwoDPlot = (function () {
 	
 	TwoDPlot.prototype.draw = function (symbol, point) {
 		symbol.draw(this._drawingContext, this._pointRelativeToCenter(point),
-			this._symbolSize, this._symbolSize);
+			{ height: this._options.symbolSize, width: this._options.symbolSize });
 	};
 	
 	return TwoDPlot;
