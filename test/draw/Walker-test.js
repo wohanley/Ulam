@@ -3,7 +3,6 @@
 	module("ulam.draw.Walker");
 
 	var Walker = ulam.draw.Walker;
-	Walker.prototype._initializeCoordinates = function () {};
 	Walker.prototype._nextStep = function () { return {
 		canMove: function () {
 			return true;
@@ -50,7 +49,14 @@
 		
 		var markers = [{ mark: sinon.spy() }, { mark: sinon.spy() }];
 		
-		new Walker({}, sequence, { markers: markers }).walk();
+		var walker = new Walker({}, sequence, { markers: markers });
+		walker._coordinates = { x: 0, y: 0 };
+		walker._step = {
+			canMove: function () { return true; },
+			move: function () {}
+		};
+		
+		walker.walk();
 
 		ok(markers[0].mark.calledThrice, "should call each marker once for each value");
 		ok(markers[1].mark.calledThrice, "should call each marker once for each value");

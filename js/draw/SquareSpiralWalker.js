@@ -1,43 +1,43 @@
-ulam.SpiralWalker = (function () {
+ulam.draw.SquareSpiralWalker = (function () {
 	
 	var StepRight = function (center, bound) {
-		this._bound = center.y + bound;
-	};
-	StepRight.prototype.canMove = function (coordinates) {
-		return coordinates.y < this._bound;
-	};
-	StepRight.prototype.move = function (coordinates) {
-		coordinates.y += 1;
-	};
-	
-	var StepUp = function (center, bound) {
 		this._bound = center.x + bound;
 	};
-	StepUp.prototype.canMove = function (coordinates) {
+	StepRight.prototype.canMove = function (coordinates) {
 		return coordinates.x < this._bound;
 	};
-	StepUp.prototype.move = function (coordinates) {
+	StepRight.prototype.move = function (coordinates) {
 		coordinates.x += 1;
 	};
 	
+	var StepUp = function (center, bound) {
+		this._bound = center.y + bound;
+	};
+	StepUp.prototype.canMove = function (coordinates) {
+		return coordinates.y < this._bound;
+	};
+	StepUp.prototype.move = function (coordinates) {
+		coordinates.y += 1;
+	};
+	
 	var StepLeft = function (center, bound) {
-		this._bound = center.y - bound;
+		this._bound = center.x - bound;
 	};
 	StepLeft.prototype.canMove = function (coordinates) {
-		return coordinates.y > this._bound;
+		return coordinates.x > this._bound;
 	};
 	StepLeft.prototype.move = function (coordinates) {
-		coordinates.y -= 1;
+		coordinates.x -= 1;
 	};
 	
 	var StepDown = function (center, bound) {
-		this._bound = center.x - bound;
+		this._bound = center.y - bound;
 	};
 	StepDown.prototype.canMove = function (coordinates) {
-		return coordinates.x > this._bound;
+		return coordinates.y > this._bound;
 	};
 	StepDown.prototype.move = function (coordinates) {
-		coordinates.x -= 1;
+		coordinates.y -= 1;
 	};
 		
 	var directionNames = {
@@ -110,64 +110,39 @@ ulam.SpiralWalker = (function () {
 		action: function () {}
 	};
 	
-	/*
-	 * Grid is assumed to be square, and you will have problems if it isn't.
-	 */
-	var SpiralWalker = function (grid, passedOptions) {
-	
-		if (!grid) {
-			throw new Error("No grid supplied.");
-		}
+	var SquareSpiralWalker = function (plot, sequence, options) {
 		
-		this._grid = grid;
-		this._options = $.extend({}, defaults, passedOptions);
+		ulam.draw.Walker.call(this, plot, sequence, options);
+
+		$.extend(this._options, defaults, options);
 		
-		this._center = findStart(this._grid, this._options.startDirection, this._options.clockwise);
+		this._center = { x: 0, y: 0 };
 		this._coordinates = $.extend({}, this._center);
 		this._bound = 0;
 		
 		this._options.startDirection = parseDirectionName(this._options.startDirection);
 		
-		this._current = orderedStepTypes.indexOf(this._options.startDirection);
+		this._currentStepIndex = orderedStepTypes.indexOf(this._options.startDirection);
 		this._direction = this._options.clockwise ? -1 : 1;
 		
 		this._step = this._nextStep();
-		
-		this._takeStep = this._takeFirstStep;
 	};
 	
-	SpiralWalker.prototype._nextStep = function () {
-		var stepType = orderedStepTypes[this._current];
-		this._bound = stepType === this._options.startDirection ? this._bound + 1 : this._bound;
-		this._current = ulam.math.addModulo(4, this._current, this._direction);
+	ulam.util.extend(SquareSpiralWalker, ulam.draw.Walker);
+	
+	SquareSpiralWalker.prototype._nextBound = function (stepType) {
+		if (stepType === this._options.startDirection) {
+			this._bound++;
+		}
+	};
+	
+	SquareSpiralWalker.prototype._nextStep = function () {
+		var stepType = orderedStepTypes[this._currentStepIndex];
+		this._nextBound(stepType);
+		this._currentStepIndex = ulam.math.addModulo(4, this._currentStepIndex, this._direction);
 		
 		return new stepType(this._center, this._bound);
 	};
 	
-	SpiralWalker.prototype._nextCoordinates = function () {
-		if (this._step.canMove(this._coordinates)) {
-			return this._step.move(this._coordinates);
-		} else {
-			this._step = this._nextStep();
-			return this._nextCoordinates();
-		}
-	};
-
-	SpiralWalker.prototype._takeNormalStep = function () {
-		this._nextCoordinates();
-		this._options.action(this._grid, this._coordinates);
-	};
-	
-	SpiralWalker.prototype._takeFirstStep = function () {
-		this._takeStep = this._takeNormalStep;
-		this._options.action(this._grid, this._coordinates);
-	};
-	
-	SpiralWalker.prototype.walk = function (steps) {
-		for (var i = 0; i < steps; i++) {
-			this._takeStep();
-		}
-	};
-	
-	return SpiralWalker;
+	return SquareSpiralWalker;
 })();
