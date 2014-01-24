@@ -13,7 +13,7 @@ test("draw adjusts shape's position relative to center", function () {
 	
 	plot.draw(shape, { x: 0, y: 0 });
 	
-	ok(shape.draw.called, "shape should be drawn");
+	strictEqual(1, shape.draw.callCount, "shape should be drawn once");
 	strictEqual(shape.draw.firstCall.args[1].x, 150, "should adjust horizontally");
 	strictEqual(shape.draw.firstCall.args[1].y, 150, "should adjust vertically");
 });

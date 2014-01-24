@@ -1,21 +1,27 @@
 module("ulam.draw.Marker");
 
-test("mark passes drawMarker context and point if check returns true", function () {
+test("mark draws symbol at point if check returns true", function () {
 	
-	var context = {};
+	var plot = {
+		draw: sinon.spy()
+	};
 	var point = {};
-	
 	var check = sinon.spy(function (n) {
 		return true;
 	});
+	var symbol = {};
+	var symbolConstructor = sinon.spy(function () {
+		return symbol;
+	});
+	var n = 1;
 	
-	var drawMarker = sinon.spy();
-	
-	new ulam.draw.Marker(check, drawMarker).mark(context, point, 1);
+	new ulam.draw.Marker(check, symbolConstructor).mark(plot, point, n);
 
-	strictEqual(1, drawMarker.callCount, "should call drawMarker only once");
-	strictEqual(context, drawMarker.firstCall.args[0], "should pass context to drawMarker");
-	strictEqual(point, drawMarker.firstCall.args[1], "should pass point to drawMarker");
+	strictEqual(1, symbolConstructor.callCount, "should construct one symbol");
+	strictEqual(n, symbolConstructor.firstCall.args[0], "should construct one symbol");
+	strictEqual(1, plot.draw.callCount, "should draw symbol once");
+	strictEqual(symbol, plot.draw.firstCall.args[0], "should pass symbol to plot.draw");
+	strictEqual(point, plot.draw.firstCall.args[1], "should pass point to plot.draw");
 });
 
 test("mark does nothing if check returns false", function () {
