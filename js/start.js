@@ -1,29 +1,14 @@
 $(function () {
 	
-	var gridSize = 29;
+	canvas = $('<canvas/>').appendTo('body');
+	canvas = canvas.get(0);
+	canvas.height = 300;
+	canvas.width = 300;
 	
-	var grid = [];
-	var table = $('<table/>');
-	$('body').append(table);
+	var sequence = new ulam.sequence.ArithmeticSequence({ end: 29 * 29 });
+	var plot = new ulam.draw.TwoDPlot(canvas, { stepLength: 10, symbolSize: 10 });
+	var primeMarker = new ulam.draw.Marker(ulam.math.isPrime, ulam.draw.symbols.Rectangle);
+	var drawer = new ulam.draw.SquareSpiralWalker(plot, sequence, { markers: [primeMarker] });
 	
-	for (var i = 0; i < gridSize; i++) {
-		grid[i] = [];
-		var tr = $('<tr/>');
-		table.append(tr);
-		for (var j = 0; j < gridSize; j++) {
-			var td = $('<td class="cell"/>');
-			tr.append(td);
-		}
-	}
-	
-	var currentNumber = 1;
-	new ulam.SpiralWalker(grid, { action: function (grid, coordinates) {
-		var position = new ulam.numberLine.Position(currentNumber);
-		var td = $('td', $('tr', table).eq(coordinates.x)).eq(coordinates.y);
-		position.addCheckObserver(new ulam.ui.TableCellPositionView(td));
-		grid[coordinates.x][coordinates.y] = position;
-		currentNumber++;
-	}}).walk(gridSize * gridSize);
-	
-	new ulam.SpiralWalker(grid, { action: ulam.checkers.checkPrimality }).walk(gridSize * gridSize);
+	drawer.walk();
 });
