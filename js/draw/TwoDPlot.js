@@ -23,6 +23,12 @@ ulam.draw.TwoDPlot = (function () {
 			{ height: this._options.symbolSize, width: this._options.symbolSize });
 	};
 	
+	TwoDPlot.prototype.drawLine = function (startPoint, endPoint) {
+		this._drawingContext.moveTo(startPoint.x, startPoint.y);
+		this._drawingContext.lineTo(endPoint.x, endPoint.y);
+		this._drawingContext.stroke();
+	};
+	
 	return TwoDPlot;
 	
 })();
