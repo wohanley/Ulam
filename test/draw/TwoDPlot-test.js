@@ -4,9 +4,10 @@
 	
 	var FakeCanvas = function () {
 		this._context = {
-			moveTo: function () {},
-			lineTo: function () {},
-			stroke: function () {}
+			beginPath: sinon.spy(),
+			moveTo: sinon.spy(),
+			lineTo: sinon.spy(),
+			stroke: sinon.spy()
 		};
 	};
 	
@@ -54,9 +55,6 @@
 	
 		var canvas = new FakeCanvas();
 		var context = canvas.getContext("2d");
-		sinon.spy(context, "moveTo");
-		sinon.spy(context, "lineTo");
-		sinon.spy(context, "stroke");
 		
 		var plot = new ulam.draw.TwoDPlot(canvas);
 		
@@ -65,6 +63,7 @@
 		
 		plot.drawLine(startPoint, endPoint);
 
+		ok(context.beginPath.calledBefore(context.moveTo));
 		ok(context.moveTo.calledBefore(context.lineTo));
 		ok(context.lineTo.calledBefore(context.stroke));
 		ok(context.moveTo.calledWith(startPoint.x, startPoint.y));
