@@ -1,4 +1,4 @@
-module("ulam.draw.Marker");
+module("ulam.draw.markers.TwoPartMarker");
 
 test("mark draws symbol at point if check returns true", function () {
 	
@@ -15,7 +15,7 @@ test("mark draws symbol at point if check returns true", function () {
 	});
 	var n = 1;
 	
-	new ulam.draw.Marker(check, symbolConstructor).mark(plot, point, n);
+	new ulam.draw.markers.TwoPartMarker(check, symbolConstructor).mark(plot, point, n);
 
 	strictEqual(1, symbolConstructor.callCount, "should construct one symbol");
 	strictEqual(n, symbolConstructor.firstCall.args[0], "should construct one symbol");
@@ -29,7 +29,7 @@ test("mark does nothing if check returns false", function () {
 	var check = function () { return false; };
 	var drawMarker = sinon.spy();
 	
-	new ulam.draw.Marker(check, drawMarker).mark(null, null, 1);
+	new ulam.draw.markers.TwoPartMarker(check, drawMarker).mark(null, null, 1);
 	
 	ok(!drawMarker.called, "should not draw marker");
 });

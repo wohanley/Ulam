@@ -7,7 +7,7 @@ $(function () {
 	
 	var sequence = new ulam.sequence.ArithmeticSequence({ end: 29 * 29 });
 	var plot = new ulam.draw.TwoDPlot(canvas, { stepLength: 10, symbolSize: 10 });
-	var primeMarker = new ulam.draw.Marker(ulam.math.isPrime, ulam.draw.symbols.Rectangle);
+	var primeMarker = new ulam.draw.markers.TwoPartMarker(ulam.math.isPrime, ulam.draw.symbols.Rectangle);
 	var drawer = new ulam.draw.SquareSpiralWalker(plot, sequence, { markers: [primeMarker] });
 	
 	drawer.walk();
