@@ -23,17 +23,11 @@
 	
 	var SquareSpiralWalker = ulam.draw.SquareSpiralWalker;
 	
-	var pointEqual = function (point, expected) {
-		var message = "(" + expected.x + ", " + expected.y + ")";
-		strictEqual(point.x, expected.x, message + " x");
-		strictEqual(point.y, expected.y, message + " y");
-	};
-	
 	var checkWalk = function (mark, plot, expectedSteps, actualSteps) {
 		strictEqual(mark.callCount, expectedSteps.length, "should call once for each step");
 		for (var i = 0; i < expectedSteps.length; i++) {
 			strictEqual(mark.getCall(i).args[0], plot);
-			pointEqual(expectedSteps[i], actualSteps[i]);
+			ulam.util.test.pointEqual(expectedSteps[i], actualSteps[i]);
 		}
 	};
 	
