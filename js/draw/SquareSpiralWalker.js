@@ -39,19 +39,6 @@ ulam.draw.SquareSpiralWalker = (function () {
 	StepDown.prototype.move = function (coordinates) {
 		coordinates.y -= 1;
 	};
-		
-	var directionNames = {
-		"right": StepRight,
-		"up": StepUp,
-		"left": StepLeft,
-		"down": StepDown
-	};
-	
-	var parseDirectionName = function (name) {
-		return directionNames[name];
-	};
-	
-	var orderedStepTypes = [StepRight, StepUp, StepLeft, StepDown];
 	
 	var defaults = {
 		startDirection: "right",
@@ -60,39 +47,23 @@ ulam.draw.SquareSpiralWalker = (function () {
 		action: function () {}
 	};
 	
+	var directionNames = {
+		"right": StepRight,
+		"up": StepUp,
+		"left": StepLeft,
+		"down": StepDown
+	};
+	
 	var SquareSpiralWalker = function (plot, sequence, options) {
 		
+		this._orderedStepTypes = [StepRight, StepUp, StepLeft, StepDown];
+		this._directionNames = directionNames;
+		this._defaults = defaults;
+		
 		ulam.draw.Walker.call(this, plot, sequence, options);
-
-		$.extend(this._options, defaults, options);
-		
-		this._center = { x: 0, y: 0 };
-		this._coordinates = $.extend({}, this._center);
-		this._bound = 0;
-		
-		this._options.startDirection = parseDirectionName(this._options.startDirection);
-		
-		this._currentStepIndex = orderedStepTypes.indexOf(this._options.startDirection);
-		this._direction = this._options.clockwise ? -1 : 1;
-		
-		this._step = this._nextStep();
 	};
 	
 	ulam.util.extend(SquareSpiralWalker, ulam.draw.Walker);
-	
-	SquareSpiralWalker.prototype._nextBound = function (stepType) {
-		if (stepType === this._options.startDirection) {
-			this._bound++;
-		}
-	};
-	
-	SquareSpiralWalker.prototype._nextStep = function () {
-		var stepType = orderedStepTypes[this._currentStepIndex];
-		this._nextBound(stepType);
-		this._currentStepIndex = ulam.math.addModulo(4, this._currentStepIndex, this._direction);
-		
-		return new stepType(this._center, this._bound);
-	};
 	
 	return SquareSpiralWalker;
 })();

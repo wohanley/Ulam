@@ -16,10 +16,35 @@ ulam.draw.Walker = (function () {
 		
 		this._plot = plot;
 		this._sequence = sequence;
-		this._options = options;
+		this._options = $.extend({}, this._defaults, options);
 		this._markers = this._options.markers || [];
 		
+		this._center = { x: 0, y: 0 };
+		this._coordinates = $.extend({}, this._center);
+		this._bound = 0;
+		
+		// start direction is passed as a string in options object
+		this._options.startDirection = this._directionNames[this._options.startDirection];
+		this._currentStepIndex = this._orderedStepTypes.indexOf(this._options.startDirection);
+		this._direction = this._options.clockwise ? -1 : 1;
+		
+		this._step = this._nextStep();
+		
 		this._takeStep = this._takeFirstStep;
+	};
+	
+	Walker.prototype._nextBound = function (stepType) {
+		if (stepType === this._options.startDirection) {
+			this._bound++;
+		}
+	};
+	
+	Walker.prototype._nextStep = function () {
+		var stepType = this._orderedStepTypes[this._currentStepIndex];
+		this._nextBound(stepType);
+		this._currentStepIndex = ulam.math.addModulo(this._orderedStepTypes.length, this._currentStepIndex, this._direction);
+		
+		return new stepType(this._center, this._bound);
 	};
 	
 	Walker.prototype._nextCoordinates = function () {

@@ -2,13 +2,22 @@
 	
 	module("ulam.draw.Walker");
 
-	var Walker = ulam.draw.Walker;
-	Walker.prototype._nextStep = function () { return {
-		canMove: function () {
-			return true;
-		},
-		move: function () {}
-	};};
+	var BasicSubWalker = function (plot, sequence, options) {
+		this._directionNames = [{ "": function () {} }];
+		this._orderedStepTypes = [ function () {} ];
+		ulam.draw.Walker.call(this, plot, sequence, options);
+		this._options.startDirection = "";
+	};
+	ulam.util.extend(BasicSubWalker, ulam.draw.Walker);
+	
+	BasicSubWalker.prototype._nextStep = function () {
+		return {
+			canMove: function () {
+				return true;
+			},
+			move: function () {}
+		};
+	};
 	
 	test("constructor throws error if canvas not supplied", function () {
 		raises(function () {
@@ -27,7 +36,7 @@
 		var sequence = { hasNext: function () { return false; } };
 		var markers = [{ mark: sinon.spy() }];
 		
-		new Walker({}, sequence, markers).walk();
+		new BasicSubWalker({}, sequence, markers).walk();
 		
 		ok(!markers[0].mark.called, "should not run marker");
 	});
@@ -49,7 +58,7 @@
 		
 		var markers = [{ mark: sinon.spy() }, { mark: sinon.spy() }];
 		
-		var walker = new Walker({}, sequence, { markers: markers });
+		var walker = new BasicSubWalker({}, sequence, { markers: markers });
 		walker._coordinates = { x: 0, y: 0 };
 		walker._step = {
 			canMove: function () { return true; },
