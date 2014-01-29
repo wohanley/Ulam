@@ -53,56 +53,6 @@ ulam.draw.SquareSpiralWalker = (function () {
 	
 	var orderedStepTypes = [StepRight, StepUp, StepLeft, StepDown];
 	
-	var lowerLeft = function (gridLength) {
-		return {
-			x: Math.floor(gridLength / 2) - 1,
-			y: Math.floor(gridLength / 2) - 1
-		};
-	};
-	
-	var lowerRight = function (gridLength) {
-		return {
-			x: Math.ceil(gridLength / 2) - 1,
-			y: Math.floor(gridLength / 2) - 1
-		};
-	};
-	
-	var upperLeft = function (gridLength) {
-		return {
-			x: Math.floor(gridLength / 2) - 1,
-			y: Math.ceil(gridLength / 2) - 1
-		};
-	};
-	
-	var upperRight = function (gridLength) {
-		return {
-			x: Math.ceil(gridLength / 2) - 1,
-			y: Math.ceil(gridLength / 2) - 1
-		};
-	};
-	
-	/*
-	 * Two-level decision tree based on start and turn directions (1 being
-	 * clockwise, 0 counterclockwise).
-	 */
-	var evenLengthStartFinders = {
-		"right": { 0: lowerLeft, 1: upperLeft },
-		"up": { 0: lowerRight, 1: lowerLeft },
-		"left": { 0: upperRight, 1: lowerRight },
-		"down": { 0: upperLeft, 1: upperRight }
-	};
-	
-	var findStart = function (grid, startDirection, clockwise) {
-		if (grid.length % 2 === 1) {
-			// odd length sides are easy...
-			var center = Math.floor(grid.length / 2);
-			return { x: center, y: center };
-		} else {
-			// ...even is a little complicated.
-			return evenLengthStartFinders[startDirection][clockwise ? 1 : 0](grid);
-		}
-	};
-	
 	var defaults = {
 		startDirection: "right",
 		clockwise: false,
