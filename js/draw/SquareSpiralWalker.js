@@ -71,13 +71,5 @@ ulam.draw.SquareSpiralWalker = (function () {
 		}
 	};
 	
-	SquareSpiralWalker.prototype._nextStep = function () {
-		var stepType = this._orderedStepTypes[this._currentStepIndex];
-		this._nextBound(stepType);
-		this._currentStepIndex = ulam.math.addModulo(this._orderedStepTypes.length, this._currentStepIndex, this._direction);
-		
-		return new stepType(this._center, this._bound);
-	};
-	
 	return SquareSpiralWalker;
 })();
