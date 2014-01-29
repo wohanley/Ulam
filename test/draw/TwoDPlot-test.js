@@ -3,6 +3,8 @@
 	module("ulam.draw.TwoDPlot");
 	
 	var FakeCanvas = function () {
+		this.width = 300;
+		this.height = 300;
 		this._context = {
 			beginPath: sinon.spy(),
 			moveTo: sinon.spy(),
@@ -58,15 +60,15 @@
 		
 		var plot = new ulam.draw.TwoDPlot(canvas);
 		
-		var startPoint = { x: 5, y: 5 };
-		var endPoint = { x: 10, y: 10 };
+		var startPoint = { x: 1, y: 1 };
+		var endPoint = { x: 2, y: 2 };
 		
 		plot.drawLine(startPoint, endPoint);
 
 		ok(context.beginPath.calledBefore(context.moveTo));
 		ok(context.moveTo.calledBefore(context.lineTo));
 		ok(context.lineTo.calledBefore(context.stroke));
-		ok(context.moveTo.calledWith(startPoint.x, startPoint.y));
-		ok(context.lineTo.calledWith(endPoint.x, endPoint.y));
+		ok(context.moveTo.calledWith(170, 170), "should adjust start relative to center");
+		ok(context.lineTo.calledWith(190, 190), "should adjust end relative to center");
 	});
 })();
