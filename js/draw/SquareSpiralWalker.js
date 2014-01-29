@@ -65,5 +65,19 @@ ulam.draw.SquareSpiralWalker = (function () {
 	
 	ulam.util.extend(SquareSpiralWalker, ulam.draw.Walker);
 	
+	SquareSpiralWalker.prototype._nextBound = function (stepType) {
+		if (stepType === this._options.startDirection) {
+			this._bound++;
+		}
+	};
+	
+	SquareSpiralWalker.prototype._nextStep = function () {
+		var stepType = this._orderedStepTypes[this._currentStepIndex];
+		this._nextBound(stepType);
+		this._currentStepIndex = ulam.math.addModulo(this._orderedStepTypes.length, this._currentStepIndex, this._direction);
+		
+		return new stepType(this._center, this._bound);
+	};
+	
 	return SquareSpiralWalker;
 })();

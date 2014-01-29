@@ -33,20 +33,6 @@ ulam.draw.Walker = (function () {
 		this._takeStep = this._takeFirstStep;
 	};
 	
-	Walker.prototype._nextBound = function (stepType) {
-		if (stepType === this._options.startDirection) {
-			this._bound++;
-		}
-	};
-	
-	Walker.prototype._nextStep = function () {
-		var stepType = this._orderedStepTypes[this._currentStepIndex];
-		this._nextBound(stepType);
-		this._currentStepIndex = ulam.math.addModulo(this._orderedStepTypes.length, this._currentStepIndex, this._direction);
-		
-		return new stepType(this._center, this._bound);
-	};
-	
 	Walker.prototype._nextCoordinates = function () {
 		if (this._step.canMove(this._coordinates)) {
 			return this._step.move(this._coordinates);
