@@ -61,6 +61,9 @@ ulam.draw.SquareSpiralWalker = (function () {
 		this._defaults = defaults;
 		
 		ulam.draw.Walker.call(this, plot, sequence, options);
+		
+		this._bound = 0;
+		this._step = this._nextStep();
 	};
 	
 	ulam.util.extend(SquareSpiralWalker, ulam.draw.Walker);

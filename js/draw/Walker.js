@@ -21,14 +21,11 @@ ulam.draw.Walker = (function () {
 		
 		this._center = { x: 0, y: 0 };
 		this._coordinates = $.extend({}, this._center);
-		this._bound = 0;
 		
 		// start direction is passed as a string in options object
 		this._options.startDirection = this._directionNames[this._options.startDirection];
 		this._currentStepIndex = this._orderedStepTypes.indexOf(this._options.startDirection);
 		this._direction = this._options.clockwise ? -1 : 1;
-		
-		this._step = this._nextStep();
 		
 		this._takeStep = this._takeFirstStep;
 	};
