@@ -68,7 +68,7 @@
 		ok(context.beginPath.calledBefore(context.moveTo));
 		ok(context.moveTo.calledBefore(context.lineTo));
 		ok(context.lineTo.calledBefore(context.stroke));
-		ok(context.moveTo.calledWith(170, 170), "should adjust start relative to center");
-		ok(context.lineTo.calledWith(190, 190), "should adjust end relative to center");
+		ok(context.moveTo.calledWith(170, 130), "should adjust start relative to center");
+		ok(context.lineTo.calledWith(190, 110), "should adjust end relative to center");
 	});
 })();

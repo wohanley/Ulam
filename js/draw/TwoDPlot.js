@@ -13,8 +13,8 @@ ulam.draw.TwoDPlot = (function () {
 	
 	TwoDPlot.prototype._getPoint = function (coordinates) {
 		return {
-			x: (this._options.stepLength * coordinates.x) + this._center.x,
-			y: (this._options.stepLength * coordinates.y) + this._center.y
+			x: this._center.x + (this._options.stepLength * coordinates.x),
+			y: this._center.y - (this._options.stepLength * coordinates.y)
 		};
 	};
 	
