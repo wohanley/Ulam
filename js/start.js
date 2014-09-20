@@ -13,13 +13,10 @@ $(function () {
 	context.fillRect(0, 0, canvasSize, canvasSize);
 	context.fillStyle = "#000";
 	
-	var sequence = new ulam.sequence.ArithmeticSequence({ end: 100 });
+	var sequence = new ulam.sequence.ArithmeticSequence({ end: 4900 });
 	var plot = new ulam.draw.TwoDPlot(canvas, { stepLength: 10, symbolSize: 8 });
 	var primeMarker = new ulam.draw.markers.TwoPartMarker(ulam.math.isPrime, ulam.draw.symbols.Rectangle);
-	//var pathMarker = new ulam.draw.markers.WalkTraceMarker();
-	var allMarker = new ulam.draw.markers.TwoPartMarker(function () { return true; }, ulam.draw.symbols.SizeRectangle);
-	var drawer = new ulam.draw.SquareSpiralWalker(plot, sequence, { markers: [ allMarker ]});
-	//var drawer = new ulam.draw.HexagonalSpiralWalker(plot, sequence, { markers: [ primeMarker ] });
+	var drawer = new ulam.draw.SquareSpiralWalker(plot, sequence, { markers: [ primeMarker ]});
 	
 	drawer.walk();
 });
